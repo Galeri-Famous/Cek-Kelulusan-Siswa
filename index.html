@@ -18,19 +18,11 @@
       <h2 class="text-2xl font-bold">MI ASY-SYAFI’IYYAH 02 JATIBARANG</h2>
     </div>
 
-    <h3 class="text-xl font-semibold mb-4">Masukkan Nama Siswa</h3>
+    <h3 class="text-xl font-semibold mb-4">Masukkan Nama atau NISN Siswa</h3>
     <input
       id="searchInput"
       type="text"
-      placeholder="Contoh: LESMANA YUNIARTI"
-      class="w-full p-3 border border-gray-300 rounded mb-4"
-    />
-
-    <h3 class="text-xl font-semibold mb-4">Atau Masukkan NISN Siswa</h3>
-    <input
-      id="nisnInput"
-      type="text"
-      placeholder="Contoh: 1234567890"
+      placeholder="Contoh: ABDULLAH MUSTHOFA atau 1234567890"
       class="w-full p-3 border border-gray-300 rounded mb-4"
     />
 
@@ -65,14 +57,12 @@
   </footer>
 
   <script>
-    // API key dan Spreadsheet ID yang sudah Anda gunakan sebelumnya
     const API_KEY = "AIzaSyCWathz0NssmvXm0xBgm_ql7CpfU7Dg_dU";
     const SPREADSHEET_ID = "12ECnsz-sA9iHH9jSyV-fSNXMsL6Sn-PTZJgg8gElcb0";
-    const RANGE = "Sheet1!A2:D"; // Data mulai baris 2, kolom A-D (Nama, Status, Link SKL, NISN)
+    const RANGE = "Sheet1!A2:D"; // Nama, Status, Link SKL, NISN
 
     let studentsData = [];
 
-    // Load data dari Google Sheets API saat halaman terbuka
     async function loadData() {
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
@@ -94,10 +84,8 @@
       }
     }
 
-    // Cari data berdasarkan Nama atau NISN
     function searchStudent() {
-      const nameInput = document.getElementById("searchInput").value.trim().toUpperCase();
-      const nisnInput = document.getElementById("nisnInput").value.trim();
+      const input = document.getElementById("searchInput").value.trim();
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = "";
 
@@ -107,15 +95,19 @@
         return;
       }
 
-      // Cari data yang cocok berdasarkan Nama atau NISN
+      if (!input) {
+        resultDiv.innerHTML = '<p class="text-red-600 font-semibold">Mohon masukkan Nama atau NISN.</p>';
+        return;
+      }
+
+      const inputUpper = input.toUpperCase();
+
+      // Cari berdasarkan Nama (case insensitive) atau NISN (exact match)
       const data = studentsData.find((row) => {
         const nama = row[0] ? row[0].toUpperCase() : "";
         const nisn = row[3] ? row[3].trim() : "";
 
-        if (nameInput && nama === nameInput) return true;
-        if (nisnInput && nisn === nisnInput) return true;
-
-        return false;
+        return nama === inputUpper || nisn === input;
       });
 
       if (data) {
