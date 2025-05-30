@@ -26,13 +26,10 @@
       <h2 class="text-xl font-bold text-center mb-2">Selamat Datang</h2>
       <p class="text-gray-700 text-justify mb-4">
         Selamat datang di website cek kelulusan <strong>MI Asy-Syafi'iyyah 02 Jatibarang</strong>. 
-        Silahkan cek status kelulusan anda dengan memasukkan <strong>Nama Lengkap</strong> atau <strong>Nomor NISN</strong> 
-        anda pada kolom pencarian untuk melihat status kelulusan siswa.
-        Kami ucapkan selamat untuk para siswa yang telah dinyatakan <strong>Lulus</strong> dari MI Asy-Syafi'iyyah 02 Jatibarang!
+        Silahkan cek status kelulusan anda dengan memasukkan <strong>Nama Lengkap</strong> atau <strong>Nomor NISN</strong>.
       </p>
       <p class="text-sm text-gray-500 text-center italic mb-4">
-        Website ini merupakan website cek kelulusan pertama milik MI Asy-Syafi'iyyah 02 Jatibarang 
-        yang dikelola oleh <strong>Media Misyada</strong> dan bekerjasama dengan <strong>Galeri Famous</strong> sebagai developernya.
+        Website ini dikelola oleh <strong>Media Misyada</strong> dan <strong>Galeri Famous</strong>.
       </p>
       <button onclick="closeModal()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Tutup</button>
     </div>
@@ -75,13 +72,19 @@
 
   <!-- SCRIPT -->
   <script>
-    // Data dummy (nanti diganti dengan fetch dari Google Sheets API)
-    const students = [
-      ["nama", "status", "link", "nisn"],
-      ["LESMANA YUNIARTI", "LULUS", "https://drive.google.com/uc?id=1WagktXkCCwDe8ztCzNgw6Pl9m5UpuqQSk&export=download", "1234567890"],
-      ["RAHMA SYIFA", "TIDAK LULUS", "", "9876543210"],
-      ["SUDIYANTO", "LULUS", "https://drive.google.com/uc?id=1xSB4PQbKAfbAo0YpIE19M2pN1wr4pm03&export=download", "1122334455"]
-    ];
+    let students = [];
+
+    async function loadData() {
+      try {
+        const response = await fetch("https://sheets.googleapis.com/v4/spreadsheets/12ECnsz-sA9iHH9jSyV-fSNXMsL6Sn-PTZJgg8gElcb0/values/Sheet1?key=AIzaSyCWathz0NssmvXm0xBgm_ql7CpfU7Dg_dU");
+        const data = await response.json();
+        students = data.values;
+        console.log("Data berhasil dimuat:", students);
+      } catch (error) {
+        console.error("Gagal memuat data:", error);
+        alert("Gagal memuat data siswa. Coba refresh halaman.");
+      }
+    }
 
     function searchStudent() {
       const input = document.getElementById("searchInput").value.trim().toUpperCase();
@@ -112,18 +115,16 @@
       }
     }
 
-    // Modal muncul otomatis dengan animasi
-    window.addEventListener('load', () => {
-      const modal = document.getElementById('welcomeModal');
-      const overlay = document.getElementById('welcomeOverlay');
+    // Modal dan load data otomatis saat halaman dibuka
+    window.addEventListener("load", () => {
+      loadData();
       setTimeout(() => {
-        modal.classList.add('show');
-      }, 100); // animasi muncul
+        document.getElementById('welcomeModal').classList.add('show');
+      }, 100);
     });
 
     function closeModal() {
-      const overlay = document.getElementById('welcomeOverlay');
-      overlay.style.display = 'none';
+      document.getElementById('welcomeOverlay').style.display = 'none';
     }
   </script>
 
