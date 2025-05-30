@@ -2,90 +2,130 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cek Kelulusan Siswa Madrasah</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    .fade-in {
+    #welcomeModal {
       opacity: 0;
-      animation: fadeIn 2s ease-in-out forwards;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+    #welcomeModal.show {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-<!-- Modal Notifikasi Sambutan -->
-<div id="welcomeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
-    <img src="https://img.icons8.com/fluency/96/graduation-cap.png" alt="Toga Kelulusan" class="mx-auto mb-4" />
-    <h2 class="text-xl font-bold text-center mb-2">Selamat Datang</h2>
-    <p class="text-gray-700 text-justify mb-4">
-      Selamat datang di website cek kelulusan <strong>MI Asy-Syafi'iyyah 02 Jatibarang</strong>. 
-      Silahkan cek status kelulusan anda dengan memasukkan <strong>Nama Lengkap</strong> atau <strong>Nomor NISN</strong> 
-      anda pada kolom pencarian untuk melihat status kelulusan siswa.
-      Kami ucapkan selamat untuk para siswa yang telah dinyatakan <strong>Lulus</strong> dari MI Asy-Syafi'iyyah 02 Jatibarang!
-    </p>
-    <p class="text-sm text-gray-500 text-center italic mb-4">
-      Website ini merupakan website cek kelulusan pertama milik MI Asy-Syafi'iyyah 02 Jatibarang 
-      yang dikelola oleh <strong>Media Misyada</strong> dan bekerjasama dengan <strong>Galeri Famous</strong> sebagai developernya.
-    </p>
-    <button onclick="closeModal()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Tutup</button>
+  <!-- MODAL NOTIFIKASI -->
+  <div id="welcomeOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div id="welcomeModal" class="bg-white rounded-xl shadow-lg max-w-lg w-full p-6 relative">
+      <img src="https://img.icons8.com/fluency/96/graduation-cap.png" alt="Toga Kelulusan" class="mx-auto mb-4" />
+      <h2 class="text-xl font-bold text-center mb-2">Selamat Datang</h2>
+      <p class="text-gray-700 text-justify mb-4">
+        Selamat datang di website cek kelulusan <strong>MI Asy-Syafi'iyyah 02 Jatibarang</strong>. 
+        Silahkan cek status kelulusan anda dengan memasukkan <strong>Nama Lengkap</strong> atau <strong>Nomor NISN</strong> 
+        anda pada kolom pencarian untuk melihat status kelulusan siswa.
+        Kami ucapkan selamat untuk para siswa yang telah dinyatakan <strong>Lulus</strong> dari MI Asy-Syafi'iyyah 02 Jatibarang!
+      </p>
+      <p class="text-sm text-gray-500 text-center italic mb-4">
+        Website ini merupakan website cek kelulusan pertama milik MI Asy-Syafi'iyyah 02 Jatibarang 
+        yang dikelola oleh <strong>Media Misyada</strong> dan bekerjasama dengan <strong>Galeri Famous</strong> sebagai developernya.
+      </p>
+      <button onclick="closeModal()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Tutup</button>
+    </div>
   </div>
-</div>
 
-<script>
-  function closeModal() {
-    document.getElementById('welcomeModal').style.display = 'none';
-  }
+  <!-- HEADER -->
+  <header class="bg-green-700 text-white p-6 text-center">
+    <h1 class="text-2xl font-bold">Cek Kelulusan Siswa Madrasah Tahun 2025</h1>
+  </header>
 
+  <!-- FORM -->
+  <main class="p-6 max-w-2xl mx-auto">
+    <div class="text-center mb-6">
+      <img src="logo-madrasah.png" alt="Logo Madrasah" class="h-24 mx-auto mb-2">
+      <h2 class="text-2xl font-bold">MI ASY-SYAFI’IYYAH 02 JATIBARANG</h2>
+    </div>
+    <h3 class="text-xl font-semibold mb-4">Masukkan Nama atau NISN</h3>
+    <input id="searchInput" type="text" placeholder="Contoh: ABDULLAH MUSTHOFA atau 1234567890" class="w-full p-3 border border-gray-300 rounded mb-4">
+    <button onclick="searchStudent()" class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700">Cari</button>
+    <div id="result" class="mt-6"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-green-800 text-white text-center p-6 mt-12">
+    <p class="mb-2">MI ASY-SYAFI’IYYAH 02 JATIBARANG | Jl. KH. Abdul Wahab Sya'roni No.13, Jatibarang Lor, Kec. Jatibarang, Kab. Brebes | Kode Pos: 52261 </p>
+    <p class="mb-2">Kontak: 0857-4752-0003</p>
+    <div class="flex justify-center space-x-4 mt-2">
+      <a href="https://www.facebook.com/profile.php?id=100067341316800&locale=id_ID" target="_blank">
+        <img src="facebook-icon.png" alt="Facebook" class="h-6 w-6 inline">
+      </a>
+      <a href="https://www.instagram.com/mediamisyada?igsh=MWN2NWwzNWdiZmRncg==" target="_blank">
+        <img src="instagram-icon.png" alt="Instagram" class="h-6 w-6 inline">
+      </a>
+      <a href="https://www.tiktok.com/@mediamisyada" target="_blank">
+        <img src="tiktok-icon.png" alt="TikTok" class="h-6 w-6 inline">
+      </a>
+    </div>
+    <p class="mt-4">&copy; 2025 MI ASY-SYAFI’IYYAH 02 JATIBARANG</p>
+  </footer>
+
+  <!-- SCRIPT -->
   <script>
-    async function fetchData() {
-      const sheetId = "12ECnsz-sA9iHH9jSyV-fSNXMsL6Sn-PTZJgg8gElcb0";
-      const apiKey = "AIzaSyCWathz0NssmvXm0xBgm_ql7CpfU7Dg_dU";
-      const range = "Sheet1!A2:D";
+    // Data dummy (nanti diganti dengan fetch dari Google Sheets API)
+    const students = [
+      ["nama", "status", "link", "nisn"],
+      ["LESMANA YUNIARTI", "LULUS", "https://drive.google.com/uc?id=1WagktXkCCwDe8ztCzNgw6Pl9m5UpuqQSk&export=download", "1234567890"],
+      ["RAHMA SYIFA", "TIDAK LULUS", "", "9876543210"],
+      ["SUDIYANTO", "LULUS", "https://drive.google.com/uc?id=1xSB4PQbKAfbAo0YpIE19M2pN1wr4pm03&export=download", "1122334455"]
+    ];
 
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.values || [];
-    }
-
-    async function searchStudent() {
+    function searchStudent() {
       const input = document.getElementById("searchInput").value.trim().toUpperCase();
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = "";
 
-      const students = await fetchData();
+      const data = students.find((row, index) =>
+        index !== 0 &&
+        (row[0].toUpperCase() === input || row[3] === input)
+      );
 
-      const found = students.find(row => {
-        const name = row[0]?.toUpperCase();
-        const nisn = row[3]?.toUpperCase();
-        return input === name || input === nisn;
-      });
-
-      if (found) {
-        const status = found[1];
-        const sklLink = found[2];
+      if (data) {
+        const status = data[1];
+        const sklLink = data[2];
         const boxColor = status === "LULUS" ? "bg-green-500" : "bg-red-500";
-        const message = status === "LULUS" ? "Selamat Anda Dinyatakan LULUS" : "Maaf, Anda Belum Lulus";
+        const statusText = status === "LULUS" ? "Selamat Anda dinyatakan LULUS" : "Maaf, Anda dinyatakan TIDAK LULUS";
 
         resultDiv.innerHTML = `
-          <div class="text-center fade-in">
-            <div class="${boxColor} text-white text-2xl font-bold py-4 px-6 rounded shadow mb-4">
-              ${message}
+          <div class="text-center">
+            <div class="${boxColor} text-white text-xl font-bold py-4 px-6 rounded shadow mb-4">
+              ${statusText}
             </div>
             ${sklLink ? `<a href="${sklLink}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded" download>Download SKL</a>` : ""}
           </div>
         `;
       } else {
-        resultDiv.innerHTML = `<p class="text-red-600 font-semibold fade-in">Data tidak ditemukan.</p>`;
+        resultDiv.innerHTML = `<p class="text-red-600 font-semibold">Data tidak ditemukan.</p>`;
       }
     }
+
+    // Modal muncul otomatis dengan animasi
+    window.addEventListener('load', () => {
+      const modal = document.getElementById('welcomeModal');
+      const overlay = document.getElementById('welcomeOverlay');
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 100); // animasi muncul
+    });
+
+    function closeModal() {
+      const overlay = document.getElementById('welcomeOverlay');
+      overlay.style.display = 'none';
+    }
   </script>
+
 </body>
 </html>
