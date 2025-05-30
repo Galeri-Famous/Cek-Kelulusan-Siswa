@@ -59,7 +59,7 @@
   <script>
     const API_KEY = "AIzaSyCWathz0NssmvXm0xBgm_ql7CpfU7Dg_dU";
     const SPREADSHEET_ID = "12ECnsz-sA9iHH9jSyV-fSNXMsL6Sn-PTZJgg8gElcb0";
-    const RANGE = "Sheet1!A2:D"; // Nama, Status, Link SKL, NISN
+    const RANGE = "Sheet1!A2:D"; // Kolom: Nama, Status, Link SKL, NISN
 
     let studentsData = [];
 
@@ -73,14 +73,12 @@
           studentsData = data.values;
           console.log("Data siswa berhasil dimuat:", studentsData);
         } else {
-          console.error("Tidak ada data ditemukan pada spreadsheet.");
           document.getElementById("result").innerHTML =
             '<p class="text-red-600 font-semibold">Tidak ada data ditemukan pada spreadsheet.</p>';
         }
       } catch (error) {
-        console.error("Gagal mengambil data dari Google Sheets API:", error);
         document.getElementById("result").innerHTML =
-          '<p class="text-red-600 font-semibold">Gagal mengambil data dari Google Sheets API. Periksa koneksi dan konfigurasi API.</p>';
+          '<p class="text-red-600 font-semibold">Gagal mengambil data dari Google Sheets API.</p>';
       }
     }
 
@@ -91,7 +89,7 @@
 
       if (studentsData.length === 0) {
         resultDiv.innerHTML =
-          '<p class="text-red-600 font-semibold">Data belum dimuat, silakan refresh halaman.</p>';
+          '<p class="text-red-600 font-semibold">Data belum dimuat. Silakan refresh halaman.</p>';
         return;
       }
 
@@ -102,23 +100,25 @@
 
       const inputUpper = input.toUpperCase();
 
-      // Cari berdasarkan Nama (case insensitive) atau NISN (exact match)
       const data = studentsData.find((row) => {
         const nama = row[0] ? row[0].toUpperCase() : "";
         const nisn = row[3] ? row[3].trim() : "";
-
         return nama === inputUpper || nisn === input;
       });
 
       if (data) {
         const status = data[1] || "-";
         const sklLink = data[2] || "";
-        const boxColor = status === "LULUS" ? "bg-green-500" : "bg-red-500";
+        const isLulus = status.toUpperCase() === "LULUS";
+        const boxColor = isLulus ? "bg-green-500" : "bg-red-500";
+        const statusText = isLulus
+          ? "Selamat, Anda dinyatakan LULUS"
+          : "Mohon Maaf, Anda dinyatakan TIDAK LULUS";
 
         resultDiv.innerHTML = `
           <div class="text-center">
-            <div class="${boxColor} text-white text-2xl font-bold py-4 px-6 rounded shadow mb-4">
-              ${status}
+            <div class="${boxColor} text-white text-xl font-bold py-4 px-6 rounded shadow mb-4">
+              ${statusText}
             </div>
             ${
               sklLink
