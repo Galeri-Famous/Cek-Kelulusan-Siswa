@@ -17,6 +17,7 @@
       <img src="logo-madrasah.png" alt="Logo Madrasah" class="h-24 mx-auto mb-2" />
       <h2 class="text-2xl font-bold">MI ASY-SYAFI’IYYAH 02 JATIBARANG</h2>
     </div>
+
     <h3 class="text-xl font-semibold mb-4">Masukkan Nama Siswa</h3>
     <input
       id="searchInput"
@@ -24,75 +25,97 @@
       placeholder="Contoh: LESMANA YUNIARTI"
       class="w-full p-3 border border-gray-300 rounded mb-4"
     />
+
+    <h3 class="text-xl font-semibold mb-4">Atau Masukkan NISN Siswa</h3>
+    <input
+      id="nisnInput"
+      type="text"
+      placeholder="Contoh: 1234567890"
+      class="w-full p-3 border border-gray-300 rounded mb-4"
+    />
+
     <button
       onclick="searchStudent()"
       class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700"
     >
       Cari
     </button>
+
     <div id="result" class="mt-6"></div>
   </main>
 
-  <footer
-    class="bg-green-800 text-white text-center p-6 mt-12"
-  >
+  <footer class="bg-green-800 text-white text-center p-6 mt-12">
     <p class="mb-2">
-      MI ASY-SYAFI’IYYAH 02 JATIBARANG | Jl. KH. Abdul Wahab Sya'roni No.18,
-      Jatibarang Lor, Kec. Jatibarang, Kab. Brebes
+      MI ASY-SYAFI’IYYAH 02 JATIBARANG | Jl. KH. Abdul Wahab Sya'roni No.18, Jatibarang Lor,
+      Kec. Jatibarang, Kab. Brebes
     </p>
     <p class="mb-2">Kontak: 0857-4752-0003</p>
     <div class="flex justify-center space-x-4 mt-2">
-      <a href="https://www.facebook.com/profile.php?id=100067341316800&locale=id_ID" target="_blank"
-        ><img src="facebook-icon.png" alt="Facebook" class="h-6 w-6 inline" />
+      <a href="https://www.facebook.com/profile.php?id=100067341316800&locale=id_ID" target="_blank">
+        <img src="facebook-icon.png" alt="Facebook" class="h-6 w-6 inline" />
       </a>
-      <a href="https://www.instagram.com/mediamisyada?igsh=MWN2NWwzNWdiZmRncg==" target="_blank"
-        ><img src="instagram-icon.png" alt="Instagram" class="h-6 w-6 inline" />
+      <a href="https://www.instagram.com/mediamisyada?igsh=MWN2NWwzNWdiZmRncg==" target="_blank">
+        <img src="instagram-icon.png" alt="Instagram" class="h-6 w-6 inline" />
       </a>
-      <a href="https://www.tiktok.com/@mediamisyada" target="_blank"
-        ><img src="tiktok-icon.png" alt="TikTok" class="h-6 w-6 inline" />
+      <a href="https://www.tiktok.com/@mediamisyada" target="_blank">
+        <img src="tiktok-icon.png" alt="TikTok" class="h-6 w-6 inline" />
       </a>
     </div>
     <p class="mt-4">&copy; 2025 MI ASY-SYAFI’IYYAH 02 JATIBARANG</p>
   </footer>
 
   <script>
-    const spreadsheetId = "12ECnsz-sA9iHH9jSyV-fSNXMsL6Sn-PTZJgg8gElcb0";
-    const apiKey = "AIzaSyCWathz0NssmvXm0xBgm_ql7CpfU7Dg_dU";
-    const sheetName = "Sheet1"; // Ganti jika nama sheet Anda berbeda
+    // API key dan Spreadsheet ID yang sudah Anda gunakan sebelumnya
+    const API_KEY = "AIzaSyCWathz0NssmvXm0xBgm_ql7CpfU7Dg_dU";
+    const SPREADSHEET_ID = "12ECnsz-sA9iHH9jSyV-fSNXMsL6Sn-PTZJgg8gElcb0";
+    const RANGE = "Sheet1!A2:D"; // Data mulai baris 2, kolom A-D (Nama, Status, Link SKL, NISN)
 
     let studentsData = [];
 
-    // Ambil data dari Google Sheets saat halaman dimuat
-    async function loadSheetData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}?key=${apiKey}`;
+    // Load data dari Google Sheets API saat halaman terbuka
+    async function loadData() {
       try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
         const response = await fetch(url);
         const data = await response.json();
-        if (data.values && data.values.length > 0) {
-          studentsData = data.values; // data array 2D
-          console.log("Data siswa berhasil di-load:", studentsData);
+
+        if (data.values) {
+          studentsData = data.values;
+          console.log("Data siswa berhasil dimuat:", studentsData);
         } else {
-          console.error("Sheet kosong atau tidak ditemukan data.");
+          console.error("Tidak ada data ditemukan pada spreadsheet.");
+          document.getElementById("result").innerHTML =
+            '<p class="text-red-600 font-semibold">Tidak ada data ditemukan pada spreadsheet.</p>';
         }
       } catch (error) {
-        console.error("Gagal mengambil data dari Google Sheets:", error);
+        console.error("Gagal mengambil data dari Google Sheets API:", error);
+        document.getElementById("result").innerHTML =
+          '<p class="text-red-600 font-semibold">Gagal mengambil data dari Google Sheets API. Periksa koneksi dan konfigurasi API.</p>';
       }
     }
 
+    // Cari data berdasarkan Nama atau NISN
     function searchStudent() {
-      const input = document.getElementById("searchInput").value.trim().toUpperCase();
+      const nameInput = document.getElementById("searchInput").value.trim().toUpperCase();
+      const nisnInput = document.getElementById("nisnInput").value.trim();
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = "";
 
       if (studentsData.length === 0) {
-        resultDiv.innerHTML = `<p class="text-red-600 font-semibold">Data belum dimuat, silakan coba refresh halaman.</p>`;
+        resultDiv.innerHTML =
+          '<p class="text-red-600 font-semibold">Data belum dimuat, silakan refresh halaman.</p>';
         return;
       }
 
-      // Baris pertama adalah header, cari mulai dari baris 1
-      const data = studentsData.find((row, index) => {
-        if (index === 0) return false; // skip header
-        return row[0].toUpperCase() === input;
+      // Cari data yang cocok berdasarkan Nama atau NISN
+      const data = studentsData.find((row) => {
+        const nama = row[0] ? row[0].toUpperCase() : "";
+        const nisn = row[3] ? row[3].trim() : "";
+
+        if (nameInput && nama === nameInput) return true;
+        if (nisnInput && nisn === nisnInput) return true;
+
+        return false;
       });
 
       if (data) {
@@ -117,8 +140,7 @@
       }
     }
 
-    // Muat data saat halaman siap
-    window.onload = loadSheetData;
+    window.onload = loadData;
   </script>
 </body>
 </html>
